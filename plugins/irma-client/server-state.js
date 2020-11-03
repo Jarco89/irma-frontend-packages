@@ -3,12 +3,13 @@ if ( typeof fetch === 'undefined' )
 
 module.exports = class ServerState {
 
-  constructor(url, options) {
+  constructor(mappings, options) {
     this._eventSource = this._eventSource();
     this._isRunning = false;
     this._isPolling = false;
     this._options = options;
-    this._options.url = url;
+    this._mappings = mappings;
+    this._pairingEnabled = false;
   }
 
   observe(stateChangeCallback, errorCallback) {
@@ -22,10 +23,36 @@ module.exports = class ServerState {
     this._startPolling();
   }
 
+  updatePairingState(continueOnSecondDevice) {
+    if (!this._options.pairing)
+      return Promise.resolve();
+
+    let shouldEnable = continueOnSecondDevice && this._options.pairing.onlyEnable(this._mappings);
+    if (shouldEnable === this._pairingEnabled)
+      return Promise.resolve();
+
+    let request = shouldEnable
+      ? this._options.pairing.enable(this._mappings)
+      : this._options.pairing.disable(this._mappings);
+
+    return fetch(request.url, request)
+      .then(r => r.json())
+      .then(parsed => parsed['bindingCode']); // TODO: Update
+  }
+
+  pairingCompleted() {
+    if (!this._options.pairing)
+      return Promise.reject(new Error("Pairing was not enabled"));
+
+    let request = this._options.pairing.completed(this._mappings);
+
+    return fetch(request.url, request);
+  }
+
   cancel() {
     if (!this._options.cancel)
       return Promise.resolve();
-    return fetch(this._options.cancel.url(this._options), {method: 'DELETE'});
+    return fetch(this._options.cancel.url(this._mappings), {method: 'DELETE'});
   }
 
   close() {
@@ -45,7 +72,7 @@ module.exports = class ServerState {
     if ( this._options.debugging )
       console.log("🌎 Using EventSource for server events");
 
-    this._source = new this._eventSource(this._options.serverSentEvents.url(this._options));
+    this._source = new this._eventSource(this._options.serverSentEvents.url(this._mappings));
 
     const canceller = setTimeout(() => {
       if ( this._options.debugging )
@@ -111,7 +138,7 @@ module.exports = class ServerState {
         return;
       }
 
-      fetch(this._options.polling.url(this._options))
+      fetch(this._options.polling.url(this._mappings))
       .then(r => {
         if ( r.status != 200 )
           throw(`Error in fetch: endpoint returned status other than 200 OK. Status: ${r.status} ${r.statusText}`);

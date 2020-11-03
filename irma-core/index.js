@@ -54,9 +54,9 @@ module.exports = class IrmaCore {
         break;
       case 'MediumContemplation':
         if (this._userAgentIsMobile())
-          this._stateMachine.transition('showIrmaButton', this._getSessionUrls(payload));
+          this._stateMachine.transition('showIrmaButton', this._getSessionUrls(payload.sessionPtr));
         else
-          this._stateMachine.transition('showQRCode', this._getSessionUrls(payload));
+          this._stateMachine.transition('showQRCode', this._getSessionUrls(payload.sessionPtr));
         break;
       default:
         if ( isFinal ) {

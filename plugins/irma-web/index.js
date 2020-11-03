@@ -36,6 +36,10 @@ module.exports = class IrmaWeb {
         this._dom.setButtonLink(payload.mobile);
         break;
 
+      case 'Pairing':
+        this._dom.setPairingCode(payload.pairingCode);
+        break;
+
       default:
         if (isFinal) this._removeVisibilityListener();
         break;

@@ -11,5 +11,8 @@ module.exports = {
   timeout:   'Sorry! We haven\'t heard<br/>from you for too long',
   error:     'Sorry! Something went wrong',
   browser:   'We\'re sorry, but your browser does not meet the minimum requirements',
-  success:   'Success!'
+  success:   'Success!',
+  pairing:   'Enter the pairing code that your IRMA app currently shows.',
+  next:      'Next',
+  cancel:    'Cancel',
 };

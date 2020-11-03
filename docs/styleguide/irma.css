@@ -222,10 +222,10 @@
     margin: 1em 2em;
   }
 }
-.irma-web-form .irma-web-content p:first-child {
+.irma-web-form .irma-web-content > p:first-child {
   margin-top: 0;
 }
-.irma-web-form .irma-web-content p:last-child {
+.irma-web-form .irma-web-content > p:last-child {
   margin-bottom: 0;
 }
 .irma-web-form .irma-web-content a {
@@ -244,7 +244,7 @@
   color: #004C92;
 }
 
-.irma-web-button {
+.irma-web-button, .irma-web-pairing-form button {
   background-color: inherit;
   box-sizing: border-box;
   margin: 0px;
@@ -278,11 +278,11 @@
   /* Non-prefixed version, currently
      supported by Chrome and Opera */
 }
-.irma-web-button:active {
+.irma-web-button:active, .irma-web-pairing-form button:active {
   transform: scale3d(0.99, 0.99, 1);
   transform-origin: center;
 }
-.irma-web-button:focus {
+.irma-web-button:focus, .irma-web-pairing-form button:focus {
   outline: 0;
 }
 
@@ -299,6 +299,103 @@
   background-repeat: no-repeat;
   font-size: 0;
   color: transparent;
+}
+
+.irma-web-button, .irma-web-pairing-form button {
+  background-color: inherit;
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+  font-family: "Roboto", Tahoma, Arial, sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  color: #7f7f7f;
+  display: inline-block;
+  padding: 1.5em 4em;
+  background-color: #004C92;
+  border: 1px solid #00315f;
+  border-radius: 10px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+     supported by Chrome and Opera */
+}
+.irma-web-button:active, .irma-web-pairing-form button:active {
+  transform: scale3d(0.99, 0.99, 1);
+  transform-origin: center;
+}
+.irma-web-button:focus, .irma-web-pairing-form button:focus {
+  outline: 0;
+}
+
+.irma-web-pairing-form {
+  background-color: inherit;
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Roboto", Tahoma, Arial, sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  color: #7f7f7f;
+  flex-direction: column;
+}
+.irma-web-pairing-form .irma-web-pairing-code {
+  background-color: inherit;
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+  margin: 10px 0 25px;
+  display: flex;
+  flex-direction: row;
+}
+.irma-web-pairing-form p {
+  text-align: center;
+  align-self: center;
+}
+.irma-web-pairing-form button {
+  background-color: #7f7f7f;
+}
+.irma-web-pairing-form .irma-web-pairing-submit-valid {
+  background-color: #004C92;
+}
+.irma-web-pairing-form input {
+  background-color: inherit;
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+  margin: 8px;
+  height: 40px;
+  width: 30px;
+  text-align: center;
+  font-size: 1.5em;
+  border: 1px solid #000;
+  border-radius: 4px;
+}
+@media screen and (max-width: 310px) {
+  .irma-web-pairing-form input {
+    margin: 4px;
+    height: 32px;
+    width: 24px;
+    font-size: 1em;
+  }
 }
 
 .irma-web-qr-code {

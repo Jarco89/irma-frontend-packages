@@ -18,7 +18,7 @@ module.exports = {
   },
 
   Loading: {
-    loaded:         'MediumContemplation',  // Expected payload: sessionPtr
+    loaded:         'MediumContemplation',  // Expected payload: { sessionPtr, frontendAuth (if available) }
     abort:          'Aborted',              // Expected payload: undefined
     fail:           'Error'                 // Expected payload: error object
   },
@@ -32,6 +32,7 @@ module.exports = {
 
   ShowingQRCode: {
     appConnected:   'ContinueOn2ndDevice',  // Expected payload: undefined
+    appPairing:     'Pairing',              // Expected payload: pairing code
     timeout:        'TimedOut',             // Expected payload: undefined
     abort:          'Aborted',              // Expected payload: undefined
     fail:           'Error',                // Expected payload: error object
@@ -68,6 +69,7 @@ module.exports = {
 
   ShowingQRCodeInstead: {
     appConnected:   'ContinueOn2ndDevice',  // Expected payload: undefined
+    appPairing:     'Pairing',              // Expected payload: { pairingCode }
     restart:        'Loading',              // Expected payload: undefined
     timeout:        'TimedOut',             // Expected payload: undefined
     abort:          'Aborted',              // Expected payload: undefined
@@ -75,6 +77,14 @@ module.exports = {
 
     // State change below is only performed if user agent actually changed.
     checkUserAgent: 'ShowingQRCode'         // Expected payload: {qr: <payload for in QRs, mobile: <app link for launching the IRMA app>}
+  },
+
+  Pairing: {
+    pairingCompleted: 'ContinueInIrmaApp',  // Expected payload: undefined
+    restart:          'Loading',            // Expected payload: undefined
+    timeout:          'TimedOut',           // Expected payload: undefined
+    abort:            'Aborted',            // Expected payload: undefined
+    fail:             'Error',              // Expected payload: error object
   },
 
   ContinueInIrmaApp: {

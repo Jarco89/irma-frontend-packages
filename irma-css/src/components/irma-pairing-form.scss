@@ -1,0 +1,97 @@
+// IRMA pairing form
+//
+// A form to enter the pairing code in order to pair your IRMA app with the session.
+//
+// Markup:
+// <form
+//   class="irma-web-pairing-form"
+//   onsubmit="let code = Array.prototype.map.call(document.querySelector('.irma-web-pairing-code').children, c => c.value).join(''); alert(`We should send the code ${code} now.`); return false;"
+// >
+//   <div class="irma-web-pairing-code">
+//     <input inputmode="numeric" pattern="\d" maxlength="1" required />
+//     <input inputmode="numeric" pattern="\d" maxlength="1" required />
+//     <input inputmode="numeric" pattern="\d" maxlength="1" required />
+//     <input inputmode="numeric" pattern="\d" maxlength="1" required />
+//   </div>
+//   <button id="irma-web-pairing-submit" type="submit">
+//     Volgende
+//   </button>
+//   <p><a>Annuleer</a></p>
+//   <script type="application/javascript">
+//     let inputFields = document.querySelectorAll('.irma-web-pairing-form input');
+//     inputFields.forEach(field => {
+//       field.onkeydown = (event) => {
+//         field.prevValue = field.value;
+//         if (event.key != 'Enter') field.value = '';
+//       };
+//       field.onkeyup = (event) => {
+//         let prevField = field.previousElementSibling;
+//         if (prevField && field.value === field.prevValue && event.key == 'Backspace') {
+//           prevField.value = '';
+//           prevField.focus();
+//         }
+//         let fn = field.form.querySelectorAll('input:invalid').length == 0 ? 'add' : 'remove';
+//         field.form.querySelector('#irma-web-pairing-submit').classList[fn]('irma-web-pairing-submit-valid');
+//       };
+//       field.oninput = () => {
+//         let nextField = field.nextElementSibling;
+//         if (nextField && field.value) nextField.focus()
+//       };
+//     });
+//   </script>
+// </form>
+//
+// Styleguide Components.IRMA pairing form
+
+@import './irma-button',
+        '../mixins/reset',
+        '../mixins/fonts',
+        '../mixins/center',
+        '../variables/colours';
+
+.irma-web-pairing-form {
+  @include reset;
+  @include center;
+  @include font;
+
+  flex-direction: column;
+
+  .irma-web-pairing-code {
+    @include reset;
+    margin: 10px 0 25px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  p {
+    text-align: center;
+    align-self: center;
+  }
+
+  button {
+    @extend .irma-web-button;
+    background-color: $button-disabled-color;
+  }
+
+  .irma-web-pairing-submit-valid {
+    background-color: $button-color;
+  }
+
+  input {
+    @include reset;
+    margin: 8px;
+    height: 40px;
+    width: 30px;
+    text-align: center;
+    font-size: 1.5em;
+    border: 1px solid #000;
+    border-radius: 4px;
+
+    @media screen and (max-width: 310px) {
+      margin: 4px;
+      height: 32px;
+      width: 24px;
+      font-size: 1em;
+    }
+  }
+}

@@ -1,6 +1,7 @@
 const qrcode = require('qrcode-terminal');
+const readline = require('readline');
 
-module.exports = (askRetry) => {
+module.exports = (askRetry, askPairingCode) => {
   return class IrmaConsole {
 
     constructor({stateMachine}) {
@@ -21,7 +22,20 @@ module.exports = (askRetry) => {
         case 'ContinueOn2ndDevice':
         case 'ContinueInIrmaApp':
           return console.log('Please follow the instructions in the IRMA app.');
+        case 'Pairing':
+          return this._askPairingCode(payload.pairingCode); // TODO: Update payload.
       }
+    }
+
+    _askPairingCode(pairingCode) {
+        let code = askPairingCode();
+        if (code === pairingCode) {
+          this._stateMachine.transition('pairingCompleted');
+        } else if (askRetry("Wrong pairing code was entered.")) {
+          this._askPairingCode(pairingCode);
+        } else {
+          this._askRetry("Pairing cancelled.")
+        }
     }
 
     _askRetry(message) {

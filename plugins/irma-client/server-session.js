@@ -32,7 +32,7 @@ module.exports = class ServerSession {
         this._mappings[val] = this._options.mapping[val](r)
       );
 
-      return this._mappings.sessionPtr;
+      return this._mappings;
     });
   }
 

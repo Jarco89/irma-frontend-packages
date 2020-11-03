@@ -33,6 +33,10 @@ module.exports = class DOMManipulations {
     );
   }
 
+  setPairingCode(pairingCode) {
+    this._element.querySelector('.irma-web-pairing-code').innerHTML = pairingCode;
+  }
+
   setButtonLink(link) {
     this._element.querySelector('.irma-web-button-link')
       .setAttribute('href', link);
@@ -69,6 +73,7 @@ module.exports = class DOMManipulations {
       Loading:              this._stateLoading,
       MediumContemplation:  this._stateLoading,
       ShowingQRCode:        this._stateShowingQRCode,
+      Pairing:              this._statePairing,
       ContinueOn2ndDevice:  this._stateContinueInIrmaApp,
       ShowingIrmaButton:    this._stateShowingIrmaButton,
       ShowingQRCodeInstead: this._stateShowingQRCodeInstead,
@@ -147,6 +152,17 @@ module.exports = class DOMManipulations {
       <!-- State: ShowingQRCode -->
       <canvas class="irma-web-qr-canvas"></canvas>
       <p class="irma-web-restart-button"><a data-irma-glue-transition="restart">${this._translations.back}</a></p>
+    `;
+  }
+
+  _statePairing() {
+    // TODO: I don't see a pairing code?
+    return `
+      <!-- State: Pairing -->
+      <p>${this._translations.pairing}</p>
+      <p class="irma-web-pairing-code"></p>
+      <button class="irma-web-button" data-irma-glue-transition="pairingCompleted">${this._translations.next}</button>
+      <p class="irma-web-restart-button"><a data-irma-glue-transition="restart">${this._translations.cancel}</a></p>
     `;
   }
 

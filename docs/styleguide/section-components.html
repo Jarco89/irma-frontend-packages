@@ -87,8 +87,14 @@
                       </a>
                     </li>
                     <li class="kss-nav__item ">
-                      <a href="section-components.html#kssref-components-qr-code">
+                      <a href="section-components.html#kssref-components-irma-pairing-form">
                         <span class="kss-nav__ref">5.4</span>
+                        <span class="kss-nav__name">IRMA pairing form</span>
+                      </a>
+                    </li>
+                    <li class="kss-nav__item ">
+                      <a href="section-components.html#kssref-components-qr-code">
+                        <span class="kss-nav__ref">5.5</span>
                         <span class="kss-nav__name">QR code</span>
                       </a>
                     </li>
@@ -202,7 +208,7 @@ mobile device)</p>
 
                 <div class="kss-modifiers__example"><section class="irma-web-form">
   <div class="irma-web-header">
-    <p>Inloggen met <i class="irma-web-logo">IRMA</i></p>
+    <p>Ga verder met <i class="irma-web-logo">IRMA</i></p>
     <div class="irma-web-helper">
       <p>Kom je er niet uit? Kijk dan eerst eens op <a href="https://irma.app/">de website van IRMA</a>.</p>
     </div>
@@ -216,7 +222,7 @@ mobile device)</p>
 </section>
 <section class="irma-web-form">
   <div class="irma-web-header">
-    <p>Inloggen met <i class="irma-web-logo">IRMA</i></p>
+    <p>Ga verder met <i class="irma-web-logo">IRMA</i></p>
     <div class="irma-web-helper">
       <p>Kom je er niet uit? Kijk dan eerst eens op <a href="https://irma.app/">de website van IRMA</a>.</p>
     </div>
@@ -235,7 +241,7 @@ mobile device)</p>
                 <article class="kss-section__markup">
                   <pre><code class="language-markup">&lt;section class&#x3D;&quot;irma-web-form&quot;&gt;
   &lt;div class&#x3D;&quot;irma-web-header&quot;&gt;
-    &lt;p&gt;Inloggen met &lt;i class&#x3D;&quot;irma-web-logo&quot;&gt;IRMA&lt;/i&gt;&lt;/p&gt;
+    &lt;p&gt;Ga verder met &lt;i class&#x3D;&quot;irma-web-logo&quot;&gt;IRMA&lt;/i&gt;&lt;/p&gt;
     &lt;div class&#x3D;&quot;irma-web-helper&quot;&gt;
       &lt;p&gt;Kom je er niet uit? Kijk dan eerst eens op &lt;a href&#x3D;&quot;https://irma.app/&quot;&gt;de website van IRMA&lt;/a&gt;.&lt;/p&gt;
     &lt;/div&gt;
@@ -249,7 +255,7 @@ mobile device)</p>
 &lt;/section&gt;
 &lt;section class&#x3D;&quot;irma-web-form&quot;&gt;
   &lt;div class&#x3D;&quot;irma-web-header&quot;&gt;
-    &lt;p&gt;Inloggen met &lt;i class&#x3D;&quot;irma-web-logo&quot;&gt;IRMA&lt;/i&gt;&lt;/p&gt;
+    &lt;p&gt;Ga verder met &lt;i class&#x3D;&quot;irma-web-logo&quot;&gt;IRMA&lt;/i&gt;&lt;/p&gt;
     &lt;div class&#x3D;&quot;irma-web-helper&quot;&gt;
       &lt;p&gt;Kom je er niet uit? Kijk dan eerst eens op &lt;a href&#x3D;&quot;https://irma.app/&quot;&gt;de website van IRMA&lt;/a&gt;.&lt;/p&gt;
     &lt;/div&gt;
@@ -299,6 +305,108 @@ mobile device)</p>
                 </article>
 
             </section>
+            <section class="kss-section kss-section--depth-2" id="kssref-components-irma-pairing-form">
+
+            <article class="kss-section__content">
+                <p class="kss-section__source">Source: <span>src/components/irma-pairing-form.scss</span>, line <span>1</span></p>
+
+              <a class="kss-section__permalink" href="#kssref-components-irma-pairing-form">
+                <h2 class="kss-section__item kss-section__item--depth-2">
+                  <span class="kss-section__ref">5.4</span>
+                  <span class="kss-section__name">IRMA pairing form</span>
+                </h2>
+              </a>
+
+                <div class="kss-section__description"><p>A form to enter the pairing code in order to pair your IRMA app with the session.</p>
+</div>
+
+            </article>
+
+              <article class="kss-section__modifiers">
+                <h1 class="kss-modifiers__heading">Example</h1>
+
+
+                <div class="kss-modifiers__example"><form
+  class="irma-web-pairing-form"
+  onsubmit="let code = Array.prototype.map.call(document.querySelector('.irma-web-pairing-code').children, c => c.value).join(''); alert(`We should send the code ${code} now.`); return false;"
+>
+  <div class="irma-web-pairing-code">
+    <input inputmode="numeric" pattern="\d" maxlength="1" required />
+    <input inputmode="numeric" pattern="\d" maxlength="1" required />
+    <input inputmode="numeric" pattern="\d" maxlength="1" required />
+    <input inputmode="numeric" pattern="\d" maxlength="1" required />
+  </div>
+  <button id="irma-web-pairing-submit" type="submit">
+    Volgende
+  </button>
+  <p><a>Annuleer</a></p>
+  <script type="application/javascript">
+    let inputFields = document.querySelectorAll('.irma-web-pairing-form input');
+    inputFields.forEach(field => {
+      field.onkeydown = (event) => {
+        field.prevValue = field.value;
+        if (event.key != 'Enter') field.value = '';
+      };
+      field.onkeyup = (event) => {
+        let prevField = field.previousElementSibling;
+        if (prevField && field.value === field.prevValue && event.key == 'Backspace') {
+          prevField.value = '';
+          prevField.focus();
+        }
+        let fn = field.form.querySelectorAll('input:invalid').length == 0 ? 'add' : 'remove';
+        field.form.querySelector('#irma-web-pairing-submit').classList[fn]('irma-web-pairing-submit-valid');
+      };
+      field.oninput = () => {
+        let nextField = field.nextElementSibling;
+        if (nextField && field.value) nextField.focus()
+      };
+    });
+  </script>
+</form></div>
+
+              </article>
+
+                <article class="kss-section__markup">
+                  <pre><code class="language-markup">&lt;form
+  class&#x3D;&quot;irma-web-pairing-form&quot;
+  onsubmit&#x3D;&quot;let code &#x3D; Array.prototype.map.call(document.querySelector(&#x27;.irma-web-pairing-code&#x27;).children, c &#x3D;&gt; c.value).join(&#x27;&#x27;); alert(&#x60;We should send the code ${code} now.&#x60;); return false;&quot;
+&gt;
+  &lt;div class&#x3D;&quot;irma-web-pairing-code&quot;&gt;
+    &lt;input inputmode&#x3D;&quot;numeric&quot; pattern&#x3D;&quot;\d&quot; maxlength&#x3D;&quot;1&quot; required /&gt;
+    &lt;input inputmode&#x3D;&quot;numeric&quot; pattern&#x3D;&quot;\d&quot; maxlength&#x3D;&quot;1&quot; required /&gt;
+    &lt;input inputmode&#x3D;&quot;numeric&quot; pattern&#x3D;&quot;\d&quot; maxlength&#x3D;&quot;1&quot; required /&gt;
+    &lt;input inputmode&#x3D;&quot;numeric&quot; pattern&#x3D;&quot;\d&quot; maxlength&#x3D;&quot;1&quot; required /&gt;
+  &lt;/div&gt;
+  &lt;button id&#x3D;&quot;irma-web-pairing-submit&quot; type&#x3D;&quot;submit&quot;&gt;
+    Volgende
+  &lt;/button&gt;
+  &lt;p&gt;&lt;a&gt;Annuleer&lt;/a&gt;&lt;/p&gt;
+  &lt;script type&#x3D;&quot;application/javascript&quot;&gt;
+    let inputFields &#x3D; document.querySelectorAll(&#x27;.irma-web-pairing-form input&#x27;);
+    inputFields.forEach(field &#x3D;&gt; {
+      field.onkeydown &#x3D; (event) &#x3D;&gt; {
+        field.prevValue &#x3D; field.value;
+        if (event.key !&#x3D; &#x27;Enter&#x27;) field.value &#x3D; &#x27;&#x27;;
+      };
+      field.onkeyup &#x3D; (event) &#x3D;&gt; {
+        let prevField &#x3D; field.previousElementSibling;
+        if (prevField &amp;&amp; field.value &#x3D;&#x3D;&#x3D; field.prevValue &amp;&amp; event.key &#x3D;&#x3D; &#x27;Backspace&#x27;) {
+          prevField.value &#x3D; &#x27;&#x27;;
+          prevField.focus();
+        }
+        let fn &#x3D; field.form.querySelectorAll(&#x27;input:invalid&#x27;).length &#x3D;&#x3D; 0 ? &#x27;add&#x27; : &#x27;remove&#x27;;
+        field.form.querySelector(&#x27;#irma-web-pairing-submit&#x27;).classList[fn](&#x27;irma-web-pairing-submit-valid&#x27;);
+      };
+      field.oninput &#x3D; () &#x3D;&gt; {
+        let nextField &#x3D; field.nextElementSibling;
+        if (nextField &amp;&amp; field.value) nextField.focus()
+      };
+    });
+  &lt;/script&gt;
+&lt;/form&gt;</code></pre>
+                </article>
+
+            </section>
             <section class="kss-section kss-section--depth-2" id="kssref-components-qr-code">
 
             <article class="kss-section__content">
@@ -306,7 +414,7 @@ mobile device)</p>
 
               <a class="kss-section__permalink" href="#kssref-components-qr-code">
                 <h2 class="kss-section__item kss-section__item--depth-2">
-                  <span class="kss-section__ref">5.4</span>
+                  <span class="kss-section__ref">5.5</span>
                   <span class="kss-section__name">QR code</span>
                 </h2>
               </a>

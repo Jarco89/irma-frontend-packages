@@ -10,13 +10,25 @@ module.exports = class IrmaClient {
     this._session      = this._options.session ? new ServerSession(this._options.session) : false;
   }
 
-  stateChange({newState, payload}) {
+  stateChange({newState, transition, payload}) {
     switch(newState) {
       case 'Loading':
         this._canRestart = payload.canRestart;
         return this._startNewSession();
       case 'MediumContemplation':
         return this._startWatchingServerState(payload);
+      case 'ShowingQRCode':
+      case 'ShowingQRCodeInstead':
+        this._pairingPromise = this._serverState.updatePairingState(true);
+        break;
+      case 'ShowingIrmaButton':
+        this._pairingPromise = this._serverState.updatePairingState(false);
+        break;
+      case 'ContinueInIrmaApp':
+        if (transition === 'pairingCompleted') {
+          return this._serverState.pairingCompleted();
+        }
+        break;
       case 'Success':
         this._successPayload = payload;
         // Fallthrough
@@ -46,12 +58,12 @@ module.exports = class IrmaClient {
   _startNewSession() {
     if (this._session) {
       this._session.start()
-        .then(sessionPtr => {
+        .then(resp => {
           if (this._stateMachine.currentState() == 'Loading') {
-            this._stateMachine.transition('loaded', sessionPtr);
+            this._stateMachine.transition('loaded', resp);
           } else {
             // State was changed while loading, so cancel again.
-            this._serverState = new ServerState(sessionPtr.u, this._options.state);
+            this._serverState = new ServerState(resp, this._options.state);
             this._serverState.cancel()
               .catch(error => {
                 if (this._options.debugging)
@@ -68,7 +80,7 @@ module.exports = class IrmaClient {
   }
 
   _startWatchingServerState(payload) {
-    this._serverState = new ServerState(payload.u, this._options.state);
+    this._serverState = new ServerState(payload, this._options.state);
 
     try {
       this._serverState.observe(s => this._serverStateChange(s), e => this._serverHandleError(e));
@@ -101,19 +113,23 @@ module.exports = class IrmaClient {
   }
 
   _serverStateChange(newState) {
-    if ( newState == 'CONNECTED' )
-      return this._stateMachine.transition('appConnected');
-
-    this._serverState.close();
-
     switch(newState) {
+      case 'BINDING': // TODO: Update
+        // TODO: Return object?
+        return this._pairingPromise.then(pairingCode => this._stateMachine.transition('appPairing', {pairingCode}));
+      case 'CONNECTED':
+        if (this._stateMachine.currentState() !== 'ContinueInIrmaApp')
+          this._stateMachine.transition('appConnected');
+        return;
       case 'DONE':
         // What we hope will happen ;)
         return this._successStateReached();
       case 'CANCELLED':
         // This is a conscious choice by a user.
+        this._serverState.close();
         return this._handleNoSuccess('cancel');
       case 'TIMEOUT':
+        this._serverState.close();
         // This is a known and understood error. We can be explicit to the user.
         return this._handleNoSuccess('timeout');
       default:
@@ -122,6 +138,7 @@ module.exports = class IrmaClient {
         if ( this._options.debugging )
           console.error(`Unknown state received from server: '${newState}'. Payload:`, payload);
 
+        this._serverState.close();
         return this._handleNoSuccess('fail', new Error('Unknown state received from server'));
     }
   }
@@ -146,6 +163,12 @@ module.exports = class IrmaClient {
     this._stateMachine.finalTransition(transition, payload);
   }
 
+  _cancel_session() {
+    if (!this._options.cancel)
+      return Promise.resolve();
+    return fetch(this._options.cancel.url(this._mappings), {method: 'DELETE'});
+  }
+
   _sanitizeOptions(options) {
     const defaults = {
       session: {
@@ -158,7 +181,8 @@ module.exports = class IrmaClient {
         },
         mapping: {
           sessionPtr:    r => r.sessionPtr,
-          sessionToken:  r => r.token
+          sessionToken:  r => r.token,
+          frontendAuth:  r => r.frontendAuth
         },
         result: {
           url:           (o, {sessionToken}) => `${o.url}/session/${sessionToken}/result`,
@@ -171,19 +195,57 @@ module.exports = class IrmaClient {
         debugging:  options.debugging,
 
         serverSentEvents: {
-          url:        o => `${o.url}/statusevents`,
+          url:        m => `${m.sessionPtr['u']}/statusevents`,
           timeout:    2000,
         },
 
         polling: {
-          url:        o => `${o.url}/status`,
+          url:        m => `${m.sessionPtr['u']}/status`,
           interval:   500,
           startState: 'INITIALIZED'
         },
 
         cancel: {
-          url:        o => o.url
-        }
+          url:        m => m.sessionPtr['u']
+        },
+
+        // TODO: What to do with code duplication?
+        pairing: {
+          onlyEnable: m => true, //m.frontendAuth && m.sessionPtr.irmaqr === 'issuing', // TODO: Check strictness.
+
+          enable: m => ({
+            url: `${m.sessionPtr.u}/frontend/options`,
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': m.frontendAuth
+            },
+            body: JSON.stringify({
+              bindingMethod: 'pin'
+            }),
+            parseResponse: r => r.json()['bindingCode']
+          }),
+
+          disable: m => ({
+            url: `${m.sessionPtr.u}/frontend/options`,
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': m.frontendAuth
+            },
+            body: JSON.stringify({
+              bindingMethod: 'none'
+            })
+          }),
+
+          completed: m => ({
+            url: `${m.sessionPtr.u}/frontend/bindingcompleted`,
+            method: 'POST',
+            headers: {
+              'Authorization': m.frontendAuth
+            },
+          }),
+        },
       }
     };
 
