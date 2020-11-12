@@ -10,7 +10,7 @@ module.exports = class DOMManipulations {
     this._clickCallback   = clickCallback;
 
     this._renderInitialState();
-    this._attachClickHandler();
+    this._attachEventHandlers();
   }
 
   renderState(state) {
@@ -34,7 +34,7 @@ module.exports = class DOMManipulations {
   }
 
   setPairingCode(pairingCode) {
-    this._element.querySelector('.irma-web-pairing-code').innerHTML = pairingCode;
+    // TODO: Check pairing code.
   }
 
   setButtonLink(link) {
@@ -47,7 +47,7 @@ module.exports = class DOMManipulations {
     this._element.innerHTML = this._irmaWebForm(this._stateUninitialized());
   }
 
-  _attachClickHandler() {
+  _attachEventHandlers() {
     // Polyfill for Element.matches to fix IE11
     if (!Element.prototype.matches) {
       Element.prototype.matches = Element.prototype.msMatchesSelector ||
@@ -57,6 +57,40 @@ module.exports = class DOMManipulations {
     this._element.addEventListener('click', (e) => {
       if (e.target.matches('[data-irma-glue-transition]')) {
         this._clickCallback(e.target.getAttribute('data-irma-glue-transition'));
+      }
+    });
+
+    this._element.addEventListener('keydown', (e) => {
+      if (e.target.parentElement.className == 'irma-web-pairing-code') {
+        e.target.prevValue = e.target.value;
+        if (e.key != 'Enter') e.target.value = '';
+      }
+    });
+
+    this._element.addEventListener('keyup', (e) => {
+      if (e.target.parentElement.className == 'irma-web-pairing-code') {
+        let prevElement = e.target.previousElementSibling;
+        if (prevElement && e.target.value === e.target.prevValue && e.key == 'Backspace') {
+          prevElement.value = '';
+          prevElement.focus();
+        }
+        let fn = e.target.form.querySelectorAll('input:invalid').length == 0 ? 'add' : 'remove';
+        e.target.form.querySelector('#irma-web-pairing-submit').classList[fn]('irma-web-pairing-submit-valid'); // TODO: Remove ID
+      }
+    });
+
+    this._element.addEventListener('input', (e) => {
+      if (e.target.parentElement.className == 'irma-web-pairing-code') {
+        let nextElement = e.target.nextElementSibling;
+        if (nextElement && e.target.value) nextElement.focus();
+      }
+    });
+
+    this._element.addEventListener('submit', (e) => {
+      if (e.target.className == 'irma-web-pairing-form') {
+        e.preventDefault();
+        // TODO: Check whether code is valid.
+        this._clickCallback('pairingCompleted');
       }
     });
   }
@@ -159,10 +193,19 @@ module.exports = class DOMManipulations {
     // TODO: I don't see a pairing code?
     return `
       <!-- State: Pairing -->
-      <p>${this._translations.pairing}</p>
-      <p class="irma-web-pairing-code"></p>
-      <button class="irma-web-button" data-irma-glue-transition="pairingCompleted">${this._translations.next}</button>
-      <p class="irma-web-restart-button"><a data-irma-glue-transition="restart">${this._translations.cancel}</a></p>
+      <form class="irma-web-pairing-form">
+        <p>Vul de koppelcode in die in jouw IRMA-app verschijnt.</p>
+        <div class="irma-web-pairing-code">
+          <input inputmode="numeric" pattern="\\d" maxlength="1" required />
+          <input inputmode="numeric" pattern="\\d" maxlength="1" required />
+          <input inputmode="numeric" pattern="\\d" maxlength="1" required />
+          <input inputmode="numeric" pattern="\\d" maxlength="1" required />
+        </div>
+        <button id="irma-web-pairing-submit" type="submit">
+          Volgende
+        </button>
+        <p><a>Annuleer</a></p>
+      </form>
     `;
   }
 

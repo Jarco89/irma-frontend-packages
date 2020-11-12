@@ -41,6 +41,14 @@ module.exports = {
     checkUserAgent: 'ShowingIrmaButton'     // Expected payload: {qr: <payload for in QRs, mobile: <app link for launching the IRMA app>}
   },
 
+  Pairing: {
+    pairingCompleted: 'ContinueOn2ndDevice',// Expected payload: undefined
+    restart:          'Loading',            // Expected payload: undefined
+    timeout:          'TimedOut',           // Expected payload: undefined
+    abort:            'Aborted',            // Expected payload: undefined
+    fail:             'Error',              // Expected payload: error object
+  },
+
   ContinueOn2ndDevice: {
     succeed:        'Success',              // Expected payload: session result (if any)
     cancel:         'Cancelled',            // Expected payload: undefined
@@ -77,14 +85,6 @@ module.exports = {
 
     // State change below is only performed if user agent actually changed.
     checkUserAgent: 'ShowingQRCode'         // Expected payload: {qr: <payload for in QRs, mobile: <app link for launching the IRMA app>}
-  },
-
-  Pairing: {
-    pairingCompleted: 'ContinueInIrmaApp',  // Expected payload: undefined
-    restart:          'Loading',            // Expected payload: undefined
-    timeout:          'TimedOut',           // Expected payload: undefined
-    abort:            'Aborted',            // Expected payload: undefined
-    fail:             'Error',              // Expected payload: error object
   },
 
   ContinueInIrmaApp: {

@@ -41,7 +41,7 @@ module.exports = class IrmaDummy {
         case 'connection error':
           return this._stateMachine.transition('fail', new Error('Dummy connection error'));
         default:
-          return this._stateMachine.transition('loaded', this._options.qrPayload);
+          return this._stateMachine.transition('loaded', {sessionPtr: this._options.qrPayload});
       }
     }, this._options.timing.start);
   }
@@ -53,6 +53,8 @@ module.exports = class IrmaDummy {
         return;
 
       switch(this._options.dummy) {
+        case 'pairing':
+          return this._stateMachine.transition('appPairing', this._options.pairingCode);
         case 'timeout':
           return this._stateMachine.transition('timeout');
         default:
@@ -85,6 +87,7 @@ module.exports = class IrmaDummy {
       successPayload: {
         disclosed: 'Some attributes'
       },
+      pairingCode: '1234',
       timing: {
         start: 1000,
         scan: 2000,
