@@ -54,7 +54,7 @@ module.exports = class IrmaDummy {
 
       switch(this._options.dummy) {
         case 'pairing':
-          return this._stateMachine.transition('appPairing', this._options.pairingCode);
+          return this._stateMachine.transition('appPairing', {pairingCode: this._options.pairingCode});
         case 'timeout':
           return this._stateMachine.transition('timeout');
         default:

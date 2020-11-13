@@ -24,7 +24,7 @@ module.exports = class IrmaClient {
       case 'ShowingIrmaButton':
         this._pairingPromise = this._serverState.updatePairingState(false);
         break;
-      case 'ContinueInIrmaApp':
+      case 'ContinueOn2ndDevice':
         if (transition === 'pairingCompleted') {
           return this._serverState.pairingCompleted();
         }
@@ -114,11 +114,10 @@ module.exports = class IrmaClient {
 
   _serverStateChange(newState) {
     switch(newState) {
-      case 'BINDING': // TODO: Update
-        // TODO: Return object?
+      case 'PAIRING':
         return this._pairingPromise.then(pairingCode => this._stateMachine.transition('appPairing', {pairingCode}));
       case 'CONNECTED':
-        if (this._stateMachine.currentState() !== 'ContinueInIrmaApp')
+        if (this._stateMachine.isValidTransition('appConnected'))
           this._stateMachine.transition('appConnected');
         return;
       case 'DONE':
@@ -161,12 +160,6 @@ module.exports = class IrmaClient {
     if (this._canRestart)
       return this._stateMachine.transition(transition, payload);
     this._stateMachine.finalTransition(transition, payload);
-  }
-
-  _cancel_session() {
-    if (!this._options.cancel)
-      return Promise.resolve();
-    return fetch(this._options.cancel.url(this._mappings), {method: 'DELETE'});
   }
 
   _sanitizeOptions(options) {
@@ -221,9 +214,10 @@ module.exports = class IrmaClient {
               'Authorization': m.frontendAuth
             },
             body: JSON.stringify({
-              bindingMethod: 'pin'
+              '@context': 'https://irma.app/ld/request/options/v1',
+              'pairingMethod': 'pin'
             }),
-            parseResponse: r => r.json()['bindingCode']
+            parseResponse: r => r.json().then(obj => obj.pairingCode)
           }),
 
           disable: m => ({
@@ -234,12 +228,14 @@ module.exports = class IrmaClient {
               'Authorization': m.frontendAuth
             },
             body: JSON.stringify({
-              bindingMethod: 'none'
-            })
+              '@context': 'https://irma.app/ld/request/options/v1',
+              'pairingMethod': 'none'
+            }),
+            parseResponse: () => undefined
           }),
 
           completed: m => ({
-            url: `${m.sessionPtr.u}/frontend/bindingcompleted`,
+            url: `${m.sessionPtr.u}/frontend/pairingcompleted`,
             method: 'POST',
             headers: {
               'Authorization': m.frontendAuth

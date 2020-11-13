@@ -70,11 +70,6 @@
 
   button {
     @extend .irma-web-button;
-    background-color: $button-disabled-color;
-  }
-
-  .irma-web-pairing-submit-valid {
-    background-color: $button-color;
   }
 
   input {

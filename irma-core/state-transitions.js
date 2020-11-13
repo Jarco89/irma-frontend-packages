@@ -6,6 +6,7 @@
  * try to apply an invalid transition from that state.
  */
 
+// TODO: Check all restart transitions after rebase
 module.exports = {
 
   startState:       'Uninitialized',
@@ -32,7 +33,7 @@ module.exports = {
 
   ShowingQRCode: {
     appConnected:   'ContinueOn2ndDevice',  // Expected payload: undefined
-    appPairing:     'Pairing',              // Expected payload: pairing code
+    appPairing:     'Pairing',              // Expected payload: { pairingCode }
     timeout:        'TimedOut',             // Expected payload: undefined
     abort:          'Aborted',              // Expected payload: undefined
     fail:           'Error',                // Expected payload: error object
@@ -42,11 +43,11 @@ module.exports = {
   },
 
   Pairing: {
-    pairingCompleted: 'ContinueOn2ndDevice',// Expected payload: undefined
-    restart:          'Loading',            // Expected payload: undefined
-    timeout:          'TimedOut',           // Expected payload: undefined
-    abort:            'Aborted',            // Expected payload: undefined
-    fail:             'Error',              // Expected payload: error object
+    pairingCompleted: 'ContinueOn2ndDevice', // Expected payload: undefined
+    cancel:           'Cancelled',           // Expected payload: undefined
+    timeout:          'TimedOut',            // Expected payload: undefined
+    abort:            'Aborted',             // Expected payload: undefined
+    fail:             'Error',               // Expected payload: error object
   },
 
   ContinueOn2ndDevice: {

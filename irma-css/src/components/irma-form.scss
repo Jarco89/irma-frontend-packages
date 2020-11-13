@@ -184,10 +184,7 @@
     margin: 0 1rem 1rem 1rem;
 
     background-color: $content-bg-color;
-    border-bottom-right-radius: $border-radius * 0.6;
-    border-bottom-left-radius: $border-radius * 0.6;
-    border-top-left-radius: 1px;
-    border-top-right-radius: 1px;
+    border-radius: $border-radius * 0.6;
 
     .irma-web-centered {
       @include reset;

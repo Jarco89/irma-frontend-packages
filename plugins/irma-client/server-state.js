@@ -36,8 +36,7 @@ module.exports = class ServerState {
       : this._options.pairing.disable(this._mappings);
 
     return fetch(request.url, request)
-      .then(r => r.json())
-      .then(parsed => parsed['bindingCode']); // TODO: Update
+      .then(r => request.parseResponse(r));
   }
 
   pairingCompleted() {

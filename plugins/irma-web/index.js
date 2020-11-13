@@ -15,6 +15,14 @@ module.exports = class IrmaWeb {
         // Check for validity of function to prevent errors when multiple events are cached.
         if (this._stateMachine.isValidTransition(t))
           this._stateMachine.transition(t, this._lastPayload);
+      },
+      (pairingCode) => {
+        console.log(pairingCode, this._lastPayload);
+        if (pairingCode === this._lastPayload.pairingCode) {
+          this._stateMachine.transition('pairingCompleted');
+          return true;
+        }
+        return false;
       }
     );
 
@@ -34,10 +42,6 @@ module.exports = class IrmaWeb {
 
       case 'ShowingIrmaButton':
         this._dom.setButtonLink(payload.mobile);
-        break;
-
-      case 'Pairing':
-        this._dom.setPairingCode(payload.pairingCode);
         break;
 
       default:
