@@ -110,6 +110,11 @@ module.exports = class DOMManipulations {
     this._element
         .querySelector('.irma-web-content .irma-web-centered')
         .innerHTML = newPartial.call(this);
+
+    // Focus on first input field if any is present.
+    let firstInputField = this._element.querySelector('input');
+    if (firstInputField)
+      firstInputField.focus();
   }
 
   _stateToPartialMapping() {
@@ -206,7 +211,7 @@ module.exports = class DOMManipulations {
       <form class="irma-web-pairing-form">
         <p>${this._translations.pairing}</p>
         <div class="irma-web-pairing-code">
-          <input inputmode="numeric" pattern="\\d" maxlength="1" required autofocus />
+          <input inputmode="numeric" pattern="\\d" maxlength="1" required />
           <input inputmode="numeric" pattern="\\d" maxlength="1" required />
           <input inputmode="numeric" pattern="\\d" maxlength="1" required />
           <input inputmode="numeric" pattern="\\d" maxlength="1" required />
