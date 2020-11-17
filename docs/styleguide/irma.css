@@ -90,12 +90,18 @@
   font-size: 20px;
   color: white;
 }
+.irma-web-form .irma-web-header p.irma-web-error {
+  color: #d44454;
+}
 @media screen and (max-width: 768px) {
   .irma-web-form .irma-web-header p {
     font-family: "Roboto", Tahoma, Arial, sans-serif;
     font-weight: 500;
     font-size: 16px;
     color: white;
+  }
+  .irma-web-form .irma-web-header p.irma-web-error {
+    color: #d44454;
   }
 }
 .irma-web-form .irma-web-header p i.irma-web-logo {
@@ -126,6 +132,9 @@
   font-weight: 300;
   font-size: 13px;
   color: white;
+}
+.irma-web-form .irma-web-header .irma-web-helper p.irma-web-error, .irma-web-form .irma-web-header .irma-web-helper a.irma-web-error {
+  color: #d44454;
 }
 .irma-web-form .irma-web-header .irma-web-helper p {
   margin: 1em;
@@ -190,10 +199,7 @@
   flex: 1 1 auto;
   margin: 0 1rem 1rem 1rem;
   background-color: white;
-  border-bottom-right-radius: 6px;
-  border-bottom-left-radius: 6px;
-  border-top-left-radius: 1px;
-  border-top-right-radius: 1px;
+  border-radius: 6px;
 }
 .irma-web-form .irma-web-content .irma-web-centered {
   background-color: inherit;
@@ -216,6 +222,9 @@
   font-size: 15px;
   color: #7f7f7f;
   margin: 1em 4em;
+}
+.irma-web-form .irma-web-content p.irma-web-error {
+  color: #d44454;
 }
 @media screen and (max-width: 768px) {
   .irma-web-form .irma-web-content p {
@@ -240,6 +249,9 @@
   text-decoration: underline;
   cursor: pointer;
 }
+.irma-web-form .irma-web-content a.irma-web-error {
+  color: #d44454;
+}
 .irma-web-form .irma-web-content a:hover {
   color: #004C92;
 }
@@ -254,10 +266,10 @@
   font-size: 14px;
   color: #7f7f7f;
   display: inline-block;
-  padding: 1.5em 4em;
+  padding: 1em 4em;
   background-color: #004C92;
   border: 1px solid #00315f;
-  border-radius: 10px;
+  border-radius: 40px;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   text-decoration: none;
   color: white;
@@ -277,6 +289,9 @@
   user-select: none;
   /* Non-prefixed version, currently
      supported by Chrome and Opera */
+}
+.irma-web-button.irma-web-error, .irma-web-pairing-form button.irma-web-error {
+  color: #d44454;
 }
 .irma-web-button:active, .irma-web-pairing-form button:active {
   transform: scale3d(0.99, 0.99, 1);
@@ -311,10 +326,10 @@
   font-size: 14px;
   color: #7f7f7f;
   display: inline-block;
-  padding: 1.5em 4em;
+  padding: 1em 4em;
   background-color: #004C92;
   border: 1px solid #00315f;
-  border-radius: 10px;
+  border-radius: 40px;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   text-decoration: none;
   color: white;
@@ -334,6 +349,9 @@
   user-select: none;
   /* Non-prefixed version, currently
      supported by Chrome and Opera */
+}
+.irma-web-button.irma-web-error, .irma-web-pairing-form button.irma-web-error {
+  color: #d44454;
 }
 .irma-web-button:active, .irma-web-pairing-form button:active {
   transform: scale3d(0.99, 0.99, 1);
@@ -357,6 +375,9 @@
   color: #7f7f7f;
   flex-direction: column;
 }
+.irma-web-pairing-form.irma-web-error {
+  color: #d44454;
+}
 .irma-web-pairing-form .irma-web-pairing-code {
   background-color: inherit;
   box-sizing: border-box;
@@ -369,12 +390,6 @@
 .irma-web-pairing-form p {
   text-align: center;
   align-self: center;
-}
-.irma-web-pairing-form button {
-  background-color: #7f7f7f;
-}
-.irma-web-pairing-form .irma-web-pairing-submit-valid {
-  background-color: #004C92;
 }
 .irma-web-pairing-form input {
   background-color: inherit;
