@@ -378,10 +378,14 @@ mobile device)</p>
     };
     form.onsubmit = (e) => {
       e.preventDefault();
-      let code = Array.prototype.map.call(e.target.querySelector('.irma-web-pairing-code').children, c => c.value).join('');
+      let code = Array.prototype.map.call(inputFields, f => {
+        f.disabled = true;
+        return f.value;
+      }).join('');
       e.target.querySelector('.irma-web-loading-animation').style.display = 'block';
       setTimeout(() => {
         e.target.reset();
+        inputFields.forEach(f => f.disabled = false);
         inputFields[0].focus();
         e.target.querySelector('p').innerHTML = `De ingevoerde koppelcode ${code} komt niet overeen met de code in jouw IRMA-app. Probeer het opnieuw.`;
         e.target.querySelector('.irma-web-loading-animation').style.display = 'none';
@@ -445,10 +449,14 @@ mobile device)</p>
     };
     form.onsubmit &#x3D; (e) &#x3D;&gt; {
       e.preventDefault();
-      let code &#x3D; Array.prototype.map.call(e.target.querySelector(&#x27;.irma-web-pairing-code&#x27;).children, c &#x3D;&gt; c.value).join(&#x27;&#x27;);
+      let code &#x3D; Array.prototype.map.call(inputFields, f &#x3D;&gt; {
+        f.disabled &#x3D; true;
+        return f.value;
+      }).join(&#x27;&#x27;);
       e.target.querySelector(&#x27;.irma-web-loading-animation&#x27;).style.display &#x3D; &#x27;block&#x27;;
       setTimeout(() &#x3D;&gt; {
         e.target.reset();
+        inputFields.forEach(f &#x3D;&gt; f.disabled &#x3D; false);
         inputFields[0].focus();
         e.target.querySelector(&#x27;p&#x27;).innerHTML &#x3D; &#x60;De ingevoerde koppelcode ${code} komt niet overeen met de code in jouw IRMA-app. Probeer het opnieuw.&#x60;;
         e.target.querySelector(&#x27;.irma-web-loading-animation&#x27;).style.display &#x3D; &#x27;none&#x27;;
