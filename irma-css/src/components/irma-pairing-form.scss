@@ -3,41 +3,67 @@
 // A form to enter the pairing code in order to pair your IRMA app with the session.
 //
 // Markup:
-// <form
-//   class="irma-web-pairing-form"
-//   onsubmit="let code = Array.prototype.map.call(document.querySelector('.irma-web-pairing-code').children, c => c.value).join(''); alert(`We should send the code ${code} now.`); return false;"
-// >
+// <form class="irma-web-pairing-form">
+//   <p>Vul de koppelcode in die in jouw IRMA-app verschijnt.</>
 //   <div class="irma-web-pairing-code">
 //     <input inputmode="numeric" pattern="\d" maxlength="1" required />
 //     <input inputmode="numeric" pattern="\d" maxlength="1" required />
 //     <input inputmode="numeric" pattern="\d" maxlength="1" required />
 //     <input inputmode="numeric" pattern="\d" maxlength="1" required />
 //   </div>
-//   <button id="irma-web-pairing-submit" type="submit">
-//     Volgende
-//   </button>
-//   <p><a>Annuleer</a></p>
+//   <div class="irma-web-loading-animation" style="display: none">
+//     <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+//   </div>
+//   <input type="submit" style="display: none" />
 //   <script type="application/javascript">
 //     let inputFields = document.querySelectorAll('.irma-web-pairing-form input');
 //     inputFields.forEach(field => {
-//       field.onkeydown = (event) => {
-//         field.prevValue = field.value;
-//         if (event.key != 'Enter') field.value = '';
+//       field.onkeydown = (e) => {
+//         e.target.prevValue = e.target.value;
+//         if (e.key != 'Enter') e.target.value = '';
 //       };
-//       field.onkeyup = (event) => {
-//         let prevField = field.previousElementSibling;
-//         if (prevField && field.value === field.prevValue && event.key == 'Backspace') {
-//           prevField.value = '';
-//           prevField.focus();
+//       field.onkeyup = (e) => {
+//         let prevElement = e.target.previousElementSibling;
+//         if (prevElement && e.key == 'Backspace' && e.target.value === e.target.prevValue) {
+//           prevElement.value = '';
+//           prevElement.focus();
 //         }
-//         let fn = field.form.querySelectorAll('input:invalid').length == 0 ? 'add' : 'remove';
-//         field.form.querySelector('#irma-web-pairing-submit').classList[fn]('irma-web-pairing-submit-valid');
 //       };
-//       field.oninput = () => {
-//         let nextField = field.nextElementSibling;
-//         if (nextField && field.value) nextField.focus()
+//       field.oninput = (e) => {
+//         if (e.target.value) {
+//           let nextField = e.target.nextElementSibling;
+//           if (!nextField || !e.target.checkValidity()) {
+//             e.target.form.querySelector('input[type=submit]').click();
+//           } else {
+//             nextField.focus();
+//           }
+//         }
+//       };
+//       field.onfocus = (e) => {
+//         if (!e.target.value) {
+//           e.preventDefault();
+//           form.querySelector('input:invalid').focus();
+//         }
 //       };
 //     });
+//     let form = document.querySelector('.irma-web-pairing-form');
+//     form.onclick = (e) => {
+//       if (e.target.tagName !== 'INPUT') {
+//         let firstInvalidField = form.querySelector('input:invalid');
+//         if (firstInvalidField) firstInvalidField.focus();
+//       }
+//     };
+//     form.onsubmit = (e) => {
+//       e.preventDefault();
+//       let code = Array.prototype.map.call(e.target.querySelector('.irma-web-pairing-code').children, c => c.value).join('');
+//       e.target.querySelector('.irma-web-loading-animation').style.display = 'block';
+//       setTimeout(() => {
+//         e.target.reset();
+//         inputFields[0].focus();
+//         e.target.querySelector('p').innerHTML = `De ingevoerde koppelcode ${code} komt niet overeen met de code in jouw IRMA-app. Probeer het opnieuw.`;
+//         e.target.querySelector('.irma-web-loading-animation').style.display = 'none';
+//       }, 500);
+//     };
 //   </script>
 // </form>
 //
