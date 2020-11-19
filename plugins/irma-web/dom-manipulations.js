@@ -8,6 +8,8 @@ module.exports = class DOMManipulations {
     this._showHelper      = options.showHelper;
     this._showCloseButton = options.showCloseButton;
 
+    this._pairingCodeCheckingDelay = options.pairingCodeCheckingDelay;
+
     this._clickCallback       = clickCallback;
     this._pairingCodeCallback = pairingCodeCallback;
 
@@ -55,53 +57,71 @@ module.exports = class DOMManipulations {
     this._element.addEventListener('click', (e) => {
       if (e.target.matches('[data-irma-glue-transition]')) {
         this._clickCallback(e.target.getAttribute('data-irma-glue-transition'));
+      } else if (e.target.matches('.irma-web-pairing-code')) {
+        let firstInvalidField = e.target.querySelector('input:invalid');
+        if (firstInvalidField) firstInvalidField.focus();
       }
     });
 
     this._element.addEventListener('keydown', (e) => {
-      if (e.target.parentElement.className == 'irma-web-pairing-code') {
+      if (e.target.matches('.irma-web-pairing-code input')) {
         e.target.prevValue = e.target.value;
         if (e.key != 'Enter') e.target.value = '';
       }
     });
 
     this._element.addEventListener('keyup', (e) => {
-      if (e.target.parentElement.className == 'irma-web-pairing-code') {
-        switch (e.key) {
-          case 'Backspace':
-            let prevElement = e.target.previousElementSibling;
-            if (prevElement && e.target.value === e.target.prevValue && e.key == 'Backspace') {
-              prevElement.value = '';
-              prevElement.focus();
-            }
-            break;
-          case 'Enter':
-            e.preventDefault();
-            this._element.querySelector('button').click();
-            break;
+      if (e.target.matches('.irma-web-pairing-code input')) {
+        let prevField = e.target.previousElementSibling;
+        if (prevField && e.key == 'Backspace' && e.target.value === e.target.prevValue) {
+          prevField.value = '';
+          prevField.focus();
         }
       }
     });
 
     this._element.addEventListener('input', (e) => {
-      if (e.target.parentElement.className == 'irma-web-pairing-code') {
-        let nextElement = e.target.nextElementSibling;
-        if (nextElement && e.target.value) nextElement.focus();
+      if (e.target.matches('.irma-web-pairing-code input')) {
+        let nextField = e.target.nextElementSibling;
+        if (!nextField || !e.target.checkValidity()) {
+          e.target.form.querySelector('input[type=submit]').click();
+        } else {
+          nextField.focus();
+        }
+      }
+    });
+
+    this._element.addEventListener('focusin', (e) => {
+      if (e.target.matches('.irma-web-pairing-code input')) {
+        if (!e.target.value) {
+          e.preventDefault();
+          e.target.form.querySelector('input:invalid').focus();
+        }
       }
     });
 
     this._element.addEventListener('submit', (e) => {
-      // TODO: cancel next
       if (e.target.className == 'irma-web-pairing-form') {
         e.preventDefault();
-        let enteredCode = Array.prototype.map.call(e.target.querySelectorAll('input'), c => c.value).join('');
-        if (!this._pairingCodeCallback(enteredCode)) {
-          let textElement = e.target.firstElementChild;
-          textElement.innerHTML = this._translations.pairingFailed;
-          textElement.classList.add('irma-web-error');
-          e.target.reset();
-          e.target.querySelector('input').focus(); // Focus on first digit input field again.
-        }
+        let inputFields = e.target.querySelectorAll('.irma-web-pairing-code input');
+        let enteredCode = Array.prototype.map.call(inputFields, f => {
+          f.disabled = true;
+          return f.value;
+        }).join('');
+        e.target.querySelector('.irma-web-loading-animation').style.display = 'block';
+        setTimeout(() => {
+          if (document.body.contains(e.target)) {
+            e.target.querySelector('.irma-web-loading-animation').style.display = 'none';
+            if (!this._pairingCodeCallback(enteredCode)) {
+              let textElement = e.target.firstElementChild;
+              textElement.innerHTML = this._translations.pairingFailed(enteredCode);
+              textElement.classList.add('irma-web-error');
+              e.target.reset();
+              inputFields.forEach(f => f.disabled = false);
+              inputFields[0].focus();
+            }
+          }
+        }, this._pairingCodeCheckingDelay);
       }
     });
   }
@@ -216,9 +236,10 @@ module.exports = class DOMManipulations {
           <input inputmode="numeric" pattern="\\d" maxlength="1" required />
           <input inputmode="numeric" pattern="\\d" maxlength="1" required />
         </div>
-        <button type="submit">
-          ${this._translations.next}
-        </button>
+        <input type="submit" style="display: none" />
+        <div class="irma-web-loading-animation" style="display: none">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
         <p><a data-irma-glue-transition="cancel">${this._translations.cancel}</a></p>
       </form>
     `;

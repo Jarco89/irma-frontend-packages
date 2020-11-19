@@ -54,7 +54,8 @@ module.exports = class IrmaWeb {
     const defaults = {
       element:      '#irma-web-form',
       showHelper:   false,
-      translations: require(`./translations/${options.language || 'nl'}`)
+      translations: require(`./translations/${options.language || 'nl'}`),
+      pairingCodeCheckingDelay: 500
     };
 
     return merge(defaults, options);

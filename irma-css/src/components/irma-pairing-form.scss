@@ -4,7 +4,7 @@
 //
 // Markup:
 // <form class="irma-web-pairing-form">
-//   <p>Vul de koppelcode in die in jouw IRMA-app verschijnt.</>
+//   <p>Vul de koppelcode in die in je IRMA-app verschijnt.</>
 //   <div class="irma-web-pairing-code">
 //     <input inputmode="numeric" pattern="\d" maxlength="1" required />
 //     <input inputmode="numeric" pattern="\d" maxlength="1" required />
@@ -16,38 +16,36 @@
 //   </div>
 //   <input type="submit" style="display: none" />
 //   <script type="application/javascript">
-//     let inputFields = document.querySelectorAll('.irma-web-pairing-form input');
+//     let form = document.querySelector('.irma-web-pairing-form');
+//     let inputFields = form.querySelectorAll('.irma-web-pairing-code input');
 //     inputFields.forEach(field => {
 //       field.onkeydown = (e) => {
 //         e.target.prevValue = e.target.value;
 //         if (e.key != 'Enter') e.target.value = '';
 //       };
 //       field.onkeyup = (e) => {
-//         let prevElement = e.target.previousElementSibling;
-//         if (prevElement && e.key == 'Backspace' && e.target.value === e.target.prevValue) {
-//           prevElement.value = '';
-//           prevElement.focus();
+//         let prevField = e.target.previousElementSibling;
+//         if (prevField && e.key == 'Backspace' && e.target.value === e.target.prevValue) {
+//           prevField.value = '';
+//           prevField.focus();
 //         }
 //       };
 //       field.oninput = (e) => {
-//         if (e.target.value) {
-//           let nextField = e.target.nextElementSibling;
-//           if (!nextField || !e.target.checkValidity()) {
-//             e.target.form.querySelector('input[type=submit]').click();
-//           } else {
-//             nextField.focus();
-//           }
+//         let nextField = e.target.nextElementSibling;
+//         if (!nextField || !e.target.checkValidity()) {
+//           e.target.form.querySelector('input[type=submit]').click();
+//         } else {
+//           nextField.focus();
 //         }
 //       };
 //       field.onfocus = (e) => {
 //         if (!e.target.value) {
 //           e.preventDefault();
-//           form.querySelector('input:invalid').focus();
+//           e.target.form.querySelector('input:invalid').focus();
 //         }
 //       };
 //     });
-//     let form = document.querySelector('.irma-web-pairing-form');
-//     form.onclick = (e) => {
+//     inputFields[0].parentElement.onclick = (e) => {
 //       if (e.target.tagName !== 'INPUT') {
 //         let firstInvalidField = form.querySelector('input:invalid');
 //         if (firstInvalidField) firstInvalidField.focus();
@@ -91,6 +89,7 @@
     margin: 10px 0 25px;
     display: flex;
     flex-direction: row;
+    cursor: text;
   }
 
   p {

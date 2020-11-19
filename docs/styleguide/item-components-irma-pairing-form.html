@@ -109,7 +109,7 @@
 
 
                 <div class="kss-modifiers__example"><form class="irma-web-pairing-form">
-  <p>Vul de koppelcode in die in jouw IRMA-app verschijnt.</>
+  <p>Vul de koppelcode in die in je IRMA-app verschijnt.</>
   <div class="irma-web-pairing-code">
     <input inputmode="numeric" pattern="\d" maxlength="1" required />
     <input inputmode="numeric" pattern="\d" maxlength="1" required />
@@ -121,38 +121,36 @@
   </div>
   <input type="submit" style="display: none" />
   <script type="application/javascript">
-    let inputFields = document.querySelectorAll('.irma-web-pairing-form input');
+    let form = document.querySelector('.irma-web-pairing-form');
+    let inputFields = form.querySelectorAll('.irma-web-pairing-code input');
     inputFields.forEach(field => {
       field.onkeydown = (e) => {
         e.target.prevValue = e.target.value;
         if (e.key != 'Enter') e.target.value = '';
       };
       field.onkeyup = (e) => {
-        let prevElement = e.target.previousElementSibling;
-        if (prevElement && e.key == 'Backspace' && e.target.value === e.target.prevValue) {
-          prevElement.value = '';
-          prevElement.focus();
+        let prevField = e.target.previousElementSibling;
+        if (prevField && e.key == 'Backspace' && e.target.value === e.target.prevValue) {
+          prevField.value = '';
+          prevField.focus();
         }
       };
       field.oninput = (e) => {
-        if (e.target.value) {
-          let nextField = e.target.nextElementSibling;
-          if (!nextField || !e.target.checkValidity()) {
-            e.target.form.querySelector('input[type=submit]').click();
-          } else {
-            nextField.focus();
-          }
+        let nextField = e.target.nextElementSibling;
+        if (!nextField || !e.target.checkValidity()) {
+          e.target.form.querySelector('input[type=submit]').click();
+        } else {
+          nextField.focus();
         }
       };
       field.onfocus = (e) => {
         if (!e.target.value) {
           e.preventDefault();
-          form.querySelector('input:invalid').focus();
+          e.target.form.querySelector('input:invalid').focus();
         }
       };
     });
-    let form = document.querySelector('.irma-web-pairing-form');
-    form.onclick = (e) => {
+    inputFields[0].parentElement.onclick = (e) => {
       if (e.target.tagName !== 'INPUT') {
         let firstInvalidField = form.querySelector('input:invalid');
         if (firstInvalidField) firstInvalidField.focus();
@@ -180,7 +178,7 @@
 
                 <article class="kss-section__markup">
                   <pre><code class="language-markup">&lt;form class&#x3D;&quot;irma-web-pairing-form&quot;&gt;
-  &lt;p&gt;Vul de koppelcode in die in jouw IRMA-app verschijnt.&lt;/&gt;
+  &lt;p&gt;Vul de koppelcode in die in je IRMA-app verschijnt.&lt;/&gt;
   &lt;div class&#x3D;&quot;irma-web-pairing-code&quot;&gt;
     &lt;input inputmode&#x3D;&quot;numeric&quot; pattern&#x3D;&quot;\d&quot; maxlength&#x3D;&quot;1&quot; required /&gt;
     &lt;input inputmode&#x3D;&quot;numeric&quot; pattern&#x3D;&quot;\d&quot; maxlength&#x3D;&quot;1&quot; required /&gt;
@@ -192,38 +190,36 @@
   &lt;/div&gt;
   &lt;input type&#x3D;&quot;submit&quot; style&#x3D;&quot;display: none&quot; /&gt;
   &lt;script type&#x3D;&quot;application/javascript&quot;&gt;
-    let inputFields &#x3D; document.querySelectorAll(&#x27;.irma-web-pairing-form input&#x27;);
+    let form &#x3D; document.querySelector(&#x27;.irma-web-pairing-form&#x27;);
+    let inputFields &#x3D; form.querySelectorAll(&#x27;.irma-web-pairing-code input&#x27;);
     inputFields.forEach(field &#x3D;&gt; {
       field.onkeydown &#x3D; (e) &#x3D;&gt; {
         e.target.prevValue &#x3D; e.target.value;
         if (e.key !&#x3D; &#x27;Enter&#x27;) e.target.value &#x3D; &#x27;&#x27;;
       };
       field.onkeyup &#x3D; (e) &#x3D;&gt; {
-        let prevElement &#x3D; e.target.previousElementSibling;
-        if (prevElement &amp;&amp; e.key &#x3D;&#x3D; &#x27;Backspace&#x27; &amp;&amp; e.target.value &#x3D;&#x3D;&#x3D; e.target.prevValue) {
-          prevElement.value &#x3D; &#x27;&#x27;;
-          prevElement.focus();
+        let prevField &#x3D; e.target.previousElementSibling;
+        if (prevField &amp;&amp; e.key &#x3D;&#x3D; &#x27;Backspace&#x27; &amp;&amp; e.target.value &#x3D;&#x3D;&#x3D; e.target.prevValue) {
+          prevField.value &#x3D; &#x27;&#x27;;
+          prevField.focus();
         }
       };
       field.oninput &#x3D; (e) &#x3D;&gt; {
-        if (e.target.value) {
-          let nextField &#x3D; e.target.nextElementSibling;
-          if (!nextField || !e.target.checkValidity()) {
-            e.target.form.querySelector(&#x27;input[type&#x3D;submit]&#x27;).click();
-          } else {
-            nextField.focus();
-          }
+        let nextField &#x3D; e.target.nextElementSibling;
+        if (!nextField || !e.target.checkValidity()) {
+          e.target.form.querySelector(&#x27;input[type&#x3D;submit]&#x27;).click();
+        } else {
+          nextField.focus();
         }
       };
       field.onfocus &#x3D; (e) &#x3D;&gt; {
         if (!e.target.value) {
           e.preventDefault();
-          form.querySelector(&#x27;input:invalid&#x27;).focus();
+          e.target.form.querySelector(&#x27;input:invalid&#x27;).focus();
         }
       };
     });
-    let form &#x3D; document.querySelector(&#x27;.irma-web-pairing-form&#x27;);
-    form.onclick &#x3D; (e) &#x3D;&gt; {
+    inputFields[0].parentElement.onclick &#x3D; (e) &#x3D;&gt; {
       if (e.target.tagName !&#x3D;&#x3D; &#x27;INPUT&#x27;) {
         let firstInvalidField &#x3D; form.querySelector(&#x27;input:invalid&#x27;);
         if (firstInvalidField) firstInvalidField.focus();

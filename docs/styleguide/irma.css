@@ -386,6 +386,7 @@
   margin: 10px 0 25px;
   display: flex;
   flex-direction: row;
+  cursor: text;
 }
 .irma-web-pairing-form p {
   text-align: center;
